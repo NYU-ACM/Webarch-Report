@@ -75,7 +75,7 @@ object AspaceClient {
       }
     }
 
-    private def get(httpGet: HttpGet): Option[AspaceResponse] = {
+    def get(httpGet: HttpGet): Option[AspaceResponse] = {
       try {
         val response = client.execute(httpGet)
         val entity = response.getEntity
@@ -199,7 +199,6 @@ object AspaceClient {
     }
 
     //Public Methods
-
     def getTopContainerMap(repositoryId: Int, resourceId: Int): Map[String, TopContainer] = {
       var topContainers = Map[String, TopContainer]()
       var duplicates = List.empty[JValue]

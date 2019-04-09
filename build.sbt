@@ -1,4 +1,4 @@
-name := "BoxShift"
+name := "Webarch"
 
 version := "0.1"
 
