@@ -1,14 +1,9 @@
 package edu.nyu.dlts.aspace
 
-
-
 import edu.nyu.dlts.aspace.AspaceClient.AspaceSupport
 import org.json4s.native.JsonMethods._
 import org.json4s._
 import org.json4s.JsonDSL._
-
-
-case class AO(title: String, level: String)
 
 object Main extends App with AspaceSupport {
 
