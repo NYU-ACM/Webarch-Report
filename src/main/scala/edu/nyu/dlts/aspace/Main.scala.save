@@ -1,7 +1,5 @@
 package edu.nyu.dlts.aspace
 
-import java.io.{File, FileWriter}
-
 import edu.nyu.dlts.aspace.AspaceClient.AspaceSupport
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
@@ -10,22 +8,19 @@ import org.json4s.native.JsonMethods._
 import org.json4s._
 import org.json4s.JsonDSL._
 
+import scala.collection.immutable.ListMap
+import scala.io.Source
 
 case class AO(title: String, level: String)
 
 object Main extends App with AspaceSupport {
 
-  val f = new File("test.tsv")
-  val writer = new FileWriter(f)
-  writer.write(s"uri\ttitle\tresource_uri\tscope_note\n")
-  writer.flush()
-
-  val json = "query" ->
+  val json = ("query" ->
     ("field" -> "otherlevel") ~
       ("value" -> "website") ~
       ("jsonmodel_type" -> "field_query") ~
       ("negated" -> false) ~
-      ("literal" -> true)
+      ("literal" -> true))
 
   val builder = new URIBuilder(env + "/repositories/2/search")
   builder.setParameter("page", "1")
@@ -36,21 +31,16 @@ object Main extends App with AspaceSupport {
   val response = get(httpGet)
   val results = (response.get.json \ "results").extract[List[JValue]]
 
+ //println("\"uri\"\ttitle\"\t\"level\"")
+  results.foreach { r =>
+    val uri = (r \ "uri").extract[String]
+    val title = (r \ "title").extract[String]
+    val level = (r \ "level").extract[String]
+    val notes = ((r \ "notes")).extract[JValue].toString
 
-  results.foreach { result =>
-    val j = parse((result \ "json").extract[String])
-    val uri = (result \ "uri").extract[String]
-    val title = (result \ "title").extract[String]
-    val resource = (result \ "resource").extract[String]
-    val notes = (j \ "notes").extract[JValue]
-    val scope = ((notes(0) \"subnotes")(0) \"content").extract[String]
-    writer.write(s"t$uri\t$title\t$resource\t$scope\n")
-    writer.flush()
+    println("\"" + uri + "\"\t\"" + title + "\"\t\"" + level + "\"\t" + notes)
 
   }
-
-  writer.flush()
-  writer.close
 
 }
 
